@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css"
+        integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+
+    <title>Hello, world!</title>
+
+    <style>
+        .contenedorHombres {
+            display: inline-block;
+            width: 600px;
+            padding: 10px;
+            height: auto;
+            word-wrap: break-word;
+            margin: 30px 60px;
+        }
+
+        .contenedorMujeres {
+            display: inline-block;
+            width: 600px;
+            padding: 10px;
+            margin: 20px 10px;
+            height: auto;
+            word-wrap: break-word;
+        }
+    </style>
+</head>
+
+<body>
+
+    <script src="https://www.gstatic.com/firebasejs/7.24.0/firebase.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.24.0/firebase-firestore.js"></script>
+
+    <div style="width: 600px; margin: auto;" class="col-md-12 mb-3">
+       
+            <h1>Gestion de Estudiantes</h1>
+            <input type="text" id="matricula" placeholder="Ingrese la matricula del estudiante."
+                class="form-control my-3">
+            <input type="text" id="nombre" placeholder="Ingrese el nombre del alumno." class="form-control my-3">
+            <input type="text" id="edad" placeholder="Ingrese la edad del alumno." class="form-control my-3">
+            <input type="text" id="sexo" placeholder="Ingrese el genero del alumno del alumno."
+                class="form-control my-3">
+            <input type="text" id="promedio" placeholder="Ingrese el promedio del alumno." class="form-control my-3">
+            <button class="btn btn-info" id="agregar" onclick="agregar()">Guardar</button>
+    </div>
+
+
+    <div>
+        <div class="contenedorHombres">
+            <table class="table" my-3 id="t">
+                <thead class="thead-dark">
+                    <tr>
+                        <th scope="col" id="mat">Matricula</th>
+                        <th scope="col">Nombre</th>
+                        <th scope="col">Edad</th>
+                        <th scope="col">Sexo</th>
+                        <th scope="col">Promedio</th>
+                        <th scope="col">Eliminar</th>
+                        <th scope="col">Editar</th>
+                    </tr>
+                </thead>
+                <tbody id="tabla">
+                </tbody>
+                <tfoot id="h">
+
+                </tfoot>
+            </table>
+        </div>
+
+        <div class="contenedorMujeres">
+            <table class="table" my-3 id="tablaMu">
+                <thead class="thead-dark">
+                    <tr>
+                        <th scope="col" id="mat">Matricula</th>
+                        <th scope="col">Nombre</th>
+                        <th scope="col">Edad</th>
+                        <th scope="col">Sexo</th>
+                        <th scope="col">Promedio</th>
+                        <th scope="col">Eliminar</th>
+                        <th scope="col">Editar</th>
+                    </tr>
+                </thead>
+                <tbody id="tablaM">
+                </tbody>
+                <tfoot id="fin">
+
+                </tfoot>
+            </table>
+        </div>
+    </div>
+
+
+
+    <!-- Optional JavaScript; choose one of the two! -->
+
+    <!-- Option 1: jQuery and Bootstrap Bundle (includes Popper) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx"
+        crossorigin="anonymous"></script>
+
+
+    <!-- Option 2: jQuery, Popper.js, and Bootstrap JS
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.min.js" integrity="sha384-w1Q4orYjBQndcko6MimVbzY0tgp4pWB4lZ7lr30WKz0vr/aWKhXdBNmNb5D92v7s" crossorigin="anonymous"></script>
+    -->
+    <script id="main">
+        // Your web app's Firebase configuration
+        // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+        var firebaseConfig = ({
+            apiKey: "AIzaSyAx8E92zPWJyc470lyg0SVQg3EGeODv-48",
+            authDomain: "alumnos-crud-b422e.firebaseapp.com",
+            databaseURL: "https://alumnos-crud-b422e.firebaseio.com",
+            projectId: "alumnos-crud-b422e",
+            storageBucket: "alumnos-crud-b422e.appspot.com",
+            messagingSenderId: "253772449092",
+            appId: "1:253772449092:web:4398d07ea98d54ddb60311",
+            measurementId: "G-WLCSWDXCYR"
+        });
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        //firebase.analytics();
+        var db = firebase.database();
+        //--------------------------------------------------------------
+        const base = firebase.firestore();
+        var matricula, nombre, edad, sexo, promedio;
+        var nomTabla = "";
+        function leer() {
+            matricula = document.getElementById("matricula").value;
+            nombre = document.getElementById("nombre").value;
+            edad = document.getElementById("edad").value;
+            sexo = document.getElementById("sexo").value;
+            promedio = document.getElementById("promedio").value;
+
+        }
+        //  document.getElementById('agregar').onclick = function () {
+        function agregar() {
+            leer();
+            base.collection('estudiante').doc().set({
+                MtriculaDelEstudiante: matricula,
+                NombreDelEstudiante: nombre,
+                EdadDelEstudiante: edad,
+                SexoDelEstudiante: sexo,
+                PromedioDelEstudiante: promedio
+            });
+
+            console.log(matricula, nombre, edad, sexo, promedio);
+            limpiarCampos();
+            //location.reload();
+        }
+
+        //}
+        var sumaPromedioH = 0;
+        var sumaPromedioM = 0;
+        var contadorHombres = 0;
+        var contadorMujeres = 0;
+        var sum = [];
+        var tabla = document.getElementById('tabla');
+        var tablaD = document.getElementById('tablaM');
+        var pieM = document.getElementById('fin');
+        var pieH = document.getElementById('h');
+        base.collection('estudiante').onSnapshot((querySnapshot) => {
+            tabla.innerHTML = '';
+            tablaD.innerHTML = '';
+            querySnapshot.forEach((doc) => {
+
+                if (doc.data().SexoDelEstudiante == "Femenino") {
+                    
+                    console.log(`${doc.id}=>${doc.data()}`);
+
+                    tablaD.innerHTML +=
+                        `
+                <tr>
+                <th scope="row">${doc.data().MtriculaDelEstudiante}</th>
+                <td>${doc.data().NombreDelEstudiante}</td>
+                <td>${doc.data().EdadDelEstudiante}</td>
+                <td>${doc.data().SexoDelEstudiante}</td>
+                <td>${doc.data().PromedioDelEstudiante}</td>
+                <td><button class="btn btn-danger" onclick="eliminar('${doc.id}')">Eiminar</button></td>
+                <td><button class="btn btn-warning" onclick="editar('${doc.id}','${doc.data().MtriculaDelEstudiante}','${doc.data().NombreDelEstudiante}','${doc.data().EdadDelEstudiante}','${doc.data().SexoDelEstudiante}','${doc.data().PromedioDelEstudiante}')">Editar</button></td>
+                </tr>
+                `
+                contadorMujeres++;
+                    m = parseFloat(doc.data().PromedioDelEstudiante);
+                    sumaPromedioM+=m;
+                    pieM.innerHTML = '<td colspan=3> Cantidad de Mujeres:   ' + contadorMujeres + '</td><td colspan=3> Promedio de las Mujeres:      ' + parseFloat(sumaPromedioM/contadorMujeres) + '</td>';
+
+                } if (doc.data().SexoDelEstudiante == "Masculino") {
+                    
+                    console.log(`${doc.id}=>${doc.data()}`);
+                    tabla.innerHTML += `
+                <tr>
+                <th scope="row">${doc.data().MtriculaDelEstudiante}</th>
+                <td>${doc.data().NombreDelEstudiante}</td>
+                <td>${doc.data().EdadDelEstudiante}</td>
+                <td>${doc.data().SexoDelEstudiante}</td>
+                <td>${doc.data().PromedioDelEstudiante}</td>
+                <td><button class="btn btn-danger" onclick="eliminar('${doc.id}')">Eiminar</button></td>
+                <td><button class="btn btn-warning" onclick="editar('${doc.id}','${doc.data().MtriculaDelEstudiante}','${doc.data().NombreDelEstudiante}','${doc.data().EdadDelEstudiante}','${doc.data().SexoDelEstudiante}','${doc.data().PromedioDelEstudiante}')">Editar</button></td>
+                <td></td>
+                <td></td>
+                </tr>
+                `
+                contadorHombres++;
+
+               r = parseFloat(doc.data().PromedioDelEstudiante);
+                sumaPromedioH+=r;
+                pieH.innerHTML = '<td colspan=3> Cantidad de Hombres:   ' + contadorHombres + '</td><td colspan=3> Promedio:' + parseFloat(sumaPromedioH/contadorHombres) + '</td>';
+                
+            }
+
+            });
+        });
+
+        function eliminar(id) {
+            base.collection('estudiante').doc(id).delete().then(function () {
+                location.reload();
+            })
+
+            //location.reload();
+        }
+
+        function editar(id, matricula, nombre, edad, sexo, promedio) {
+
+            document.getElementById("matricula").value = matricula;
+            document.getElementById("nombre").value = nombre;
+            document.getElementById("edad").value = edad;
+            document.getElementById("sexo").value = sexo;
+            document.getElementById("promedio").value = promedio;
+
+            var boton = document.getElementById("agregar");
+            boton.innerHTML = 'Editar';
+
+            boton.onclick = function () {
+                var edicion = base.collection('estudiante').doc(id);
+
+                var matricula = document.getElementById("matricula").value;
+                var nombre = document.getElementById("nombre").value;
+                var edad = document.getElementById("edad").value;
+                var sexo = document.getElementById("sexo").value;
+                var promedio = document.getElementById("promedio").value;
+
+                return edicion.update({
+                    MtriculaDelEstudiante: matricula,
+                    NombreDelEstudiante: nombre,
+                    EdadDelEstudiante: edad,
+                    SexoDelEstudiante: sexo,
+                    PromedioDelEstudiante: promedio
+                })
+                    .then(function () {
+                        boton.innerHTML = 'Guardar';
+                        boton.onclick = function () {
+                            agregar();
+                        }
+                        limpiarCampos();
+                        location.reload();
+                    })
+            }
+
+        }
+
+
+        //base.collection('estudiante').doc()
+        function limpiarCampos() {
+            document.getElementById("matricula").value = "";
+            document.getElementById("nombre").value = "";
+            document.getElementById("edad").value = "";
+            document.getElementById("sexo").value = "";
+            document.getElementById("promedio").value = "";
+        }
+    </script>
+</body>
+
+</html>
